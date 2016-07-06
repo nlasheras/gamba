@@ -1,4 +1,5 @@
 #include "sprites.h"
+#include "image.h"
 
 #include <gba_video.h>
 #include <gba_dma.h>
@@ -12,6 +13,7 @@ SpriteEntry OAMCopy[128];
 int sm_firstFreeSprite = 0;
 
 #define USE_DMA
+
 void InitOAM()
 {
     for(int i = 0; i < 128; i++)
@@ -73,60 +75,16 @@ void CopyTiles(const u8* src, u16* dst, int width)
     }
 }
 
-typedef struct { unsigned char r, g, b; } pcx_rgb24;
-
-void LoadPCX(const u8* pcx, u16* sprites, u16* palette)
-{
-    pcx_rgb24* pal;
-
-    pcx_header* hdr = (pcx_header*)pcx;
-    pcx += sizeof(pcx_header); //move past the header
-
-    int imagewidth  = hdr->x2 - hdr->x1 + 1;
-    int imageheight = hdr->y2 - hdr->y1 + 1;
-
-    int size = imagewidth * imageheight;
-
-    if(hdr->bpp != 8)
-       return;
-
-    int count = 0;
-
-    u8* buffer = (u8*)malloc(size);
-
-    while(count < size)
-    {
-       u8 c = *pcx++;
-       if(c < 192) {
-          buffer[count++] = c;
-       } else { 
-          int run = c - 192;
-          c = *pcx++;
-          for(int i = 0; i < run; i++) 
-          {
-            buffer[count++] = c;
-          }
-       }
-    }
-
-    CopyTiles(buffer, sprites, imagewidth);
-
-    free(buffer);
-
-    if (hdr->version != 5)
-        return;
-    if (*pcx != 0x0C)
-        return;
-
-    pal = (pcx_rgb24*)(pcx + 1);
-    for(int i = 0; i < 256; i++)
-    {
-       palette[i] = RGB8(pal[i].r, pal[i].g, pal[i].b);
-    }
-}
-
 void LoadSpriteSheet()
 {
-    LoadPCX(test_sheet_pcx, SPRITE_GFX, SPRITE_PALETTE);
+    Image sheet;
+    Image_LoadPCX(&sheet, test_sheet_pcx);
+    
+    CopyTiles(sheet.data, SPRITE_GFX, sheet.width);
+
+    for(int i = 0; i < 256; i++)
+        SPRITE_PALETTE[i] = sheet.palette[i];
+
+    Image_Free(&sheet);
 }
 

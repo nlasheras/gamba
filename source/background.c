@@ -8,14 +8,16 @@
 u16* sm_parallaxMap = 0;
 u16* sm_backgroundMap = 0;
 
+#define USE_DMA
+
 void _generateSpritesAndPalette()
 {
-#if 0
+#ifdef USE_DMA
+    dmaCopy(SPRITE_PALETTE, BG_COLORS, 256*sizeof(u16));
+#else
 	u16* pal = BG_COLORS;
 	for(int i=0; i<256; i++)
 		*pal++ = SPRITE_PALETTE[i];
-#else
-    dmaCopy(SPRITE_PALETTE, BG_COLORS, 256*sizeof(u16));
 #endif
 
     const int tileSize = 4 * 8;
