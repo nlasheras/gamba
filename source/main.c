@@ -2,6 +2,7 @@
 
 #include "sprites.h" 
 #include "background.h"
+#include "random.h"
 
 #define IS_KEY_PRESSED(k) (!(REG_KEYINPUT & (k)))
 
@@ -30,6 +31,8 @@ int main_game(void)
 {
 	irqInit();
 	irqEnable(IRQ_VBLANK);
+
+    random_init(31173);
 
     REG_DISPCNT  = MODE_0 | OBJ_1D_MAP;
     REG_DISPCNT |= OBJ_ENABLE;

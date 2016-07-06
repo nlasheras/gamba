@@ -1,5 +1,11 @@
+#include "background.h" 
+#include "image.h"
+#include "random.h"
+
 #include <gba_video.h>
 #include <gba_dma.h>
+
+#include "background_sheet_pcx.h"
 
 // layer 0: parallax 256 color 256x256
 // layer 1: background 256 color 256x256
@@ -24,9 +30,45 @@ void _generateSpritesAndPalette()
     for(int s=0;s<256;++s)
     {
         u16* dst = ((u16*)VRAM) + s*tileSize; 
-        for(int x=0;x<8*8;++x)
+        for(int x=0;x<4*8;++x)
             *(dst + x) = s << 8 | s;
     }
+}
+
+void CopyBackgroundTilesToVRAM(Image* image)
+{
+    const int tileSize = 4 * 8;
+    int count = 0;
+    for(int iy=0;iy<image->height/8;++iy)
+    {
+        for(int ix=0;ix<image->width/8;++ix)
+        {
+            u16* dst = ((u16*)VRAM) + count*tileSize; 
+            u8* src = image->data + iy*image->width*8 + ix*8;
+
+            for(int y=0;y<8;++y)
+                for(int x=0;x<4;++x)
+                {
+                    const u8* curr = src + y*image->width + 2*x;
+                    *(dst + 4*y + x) = (*curr) | (*(curr+1) << 8); 
+                }
+
+            ++count;
+        }
+    }
+}
+
+void LoadBackgroundSpriteSheet()
+{
+    Image sheet;
+    Image_LoadPCX(&sheet, background_sheet_pcx);
+    
+    CopyBackgroundTilesToVRAM(&sheet);
+
+    for(int i = 0; i < 256; i++)
+        BG_COLORS[i] = sheet.palette[i];
+
+    Image_Free(&sheet);
 }
 
 void InitMap()
@@ -39,14 +81,16 @@ void InitMap()
     BGCTRL[1] = SCREEN_BASE(15) | BG_SIZE_0 | BG_256_COLOR;
 	BG_OFFSET[1].x = 0; BG_OFFSET[1].y = 0;
 
-    _generateSpritesAndPalette();
+    LoadBackgroundSpriteSheet();
 
     // 256x256 = 32x32 tiles  
     for(int i=0;i<32*32;++i)
-	    *(sm_backgroundMap + i) = (i / 16) + 20;
+	    *(sm_backgroundMap + i) = rand(1, 12);
 
+
+    int count = 0;
     for(int i=0;i<32*32;++i)
-	    *(sm_parallaxMap + i) = i % 13 ? 0 : 4;
+	    *(sm_parallaxMap + i) = rand(1, 100) > 1 ? 0 : 12 + (count++ % 4);
 }
 
 int sm_current = 0;
@@ -60,10 +104,9 @@ void UpdateScroll()
     while ((sm_scrollX/3) - sm_current > 8)
     {
         const int col = sm_current / 8;
-        const int idx = 1 + col;
         u16* dst = sm_backgroundMap + (col%32);
         for(int i=0;i<16;++i)
-	        *(dst + i*32) = idx+i;
+	        *(dst + i*32) = rand(1, 12);
 
         sm_current += 8;
     }
