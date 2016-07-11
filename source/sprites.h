@@ -17,6 +17,6 @@ void UpdateOAM();
 
 void InitSprite(Sprite* sprite, int gfxID);
 void UpdateSprite(Sprite* sprite);
+void FreeSprite(Sprite* sprite);
 
 #endif // _SPRITES_H_
-

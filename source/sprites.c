@@ -10,7 +10,6 @@
 #include "test_sheet_pcx.h"
 
 SpriteEntry OAMCopy[128];
-int sm_firstFreeSprite = 0;
 
 #define USE_DMA
 
@@ -31,10 +30,18 @@ void UpdateOAM()
 #endif
 }
 
-// TODO: find free sprite
+int findFreeSprite()
+{
+    for(int i = 0; i < 128; i++)
+        if (OAMCopy[i].attribute[0] == OBJ_DISABLE)
+            return i;
+
+    return -1;
+}
+
 void InitSprite(Sprite* sprite, int gfxID)
 {
-    const int oamIdx = sm_firstFreeSprite++;
+    const int oamIdx = findFreeSprite();
 
     sprite->gfxID = gfxID;
     
@@ -44,6 +51,11 @@ void InitSprite(Sprite* sprite, int gfxID)
     oam->attribute[0] = OBJ_256_COLOR | OBJ_SHAPE(0);  
     oam->attribute[1] = OBJ_SIZE(1);
     oam->attribute[2] = gfxID;
+}
+
+void FreeSprite(Sprite* sprite)
+{
+    sprite->oam->attribute[0] = OBJ_DISABLE;
 }
 
 // Update the sprites OAM entry to reflect new position

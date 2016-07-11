@@ -26,7 +26,88 @@ void GetInput(Sprite* sp)
     if (IS_KEY_PRESSED(KEY_B))
         sp->oam->attribute[1] ^= OBJ_VFLIP;
 }
+
+typedef struct {
+    Sprite sprite;
+    int hp;
+    bool enabled;
+} Enemy;
  
+#define MAX_ENEMIES 16
+Enemy sm_enemies[MAX_ENEMIES];
+
+int findEmptyEnemy()
+{
+    for(int i=0;i<MAX_ENEMIES;++i)
+        if (!sm_enemies[i].enabled)
+            return i;
+    return -1;
+}
+
+int sm_enemyCount = 0;
+
+void initEnemy(int x, int y)
+{
+    int idx = findEmptyEnemy();
+    if (idx == -1)
+        return;
+
+    sm_enemies[idx].enabled = true;
+
+    // enemy is the 3rd 256 colour sprite
+    InitSprite(&(sm_enemies[idx].sprite), 2*4*2); 
+    sm_enemies[idx].sprite.x = x; 
+    sm_enemies[idx].sprite.y = y;
+    
+    UpdateSprite(&(sm_enemies[idx].sprite));
+
+    ++sm_enemyCount;
+}
+
+void freeEnemy(Enemy* enemy)
+{
+    enemy->enabled = false;
+    
+    FreeSprite(&enemy->sprite);
+    
+    --sm_enemyCount;
+}
+
+void initEnemies()
+{
+    int count = rand(1, 6);
+    for (int i=0;i<count;++i)
+    {
+        int x = 100 + 20*i;
+        int y = rand(10, 150-16);
+        initEnemy(x, y);
+    }
+
+}
+
+void updateEnemies()
+{
+    for(int i=0;i<MAX_ENEMIES;++i)
+    {
+        Enemy* enemy = &(sm_enemies[i]);
+        if (!enemy->enabled)
+            continue;
+        
+        enemy->sprite.x -= 1;
+
+        UpdateSprite(&(enemy->sprite));
+
+        if (enemy->sprite.x < -16)
+            freeEnemy(enemy);
+    }
+
+    if (sm_enemyCount < 8)
+    {
+        if (rand(0, 100) < 5)
+            initEnemy(240, rand(10, 150-16));
+    }
+}
+
 int main_game(void)
 {
 	irqInit();
@@ -42,19 +123,19 @@ int main_game(void)
     LoadSpriteSheet();
     InitMap();
 
-    Sprite sprite1, sprite2;
+    Sprite player;
 
-    InitSprite(&sprite1, 0);
-    sprite1.x = 10; sprite1.y = 10;
-
-    InitSprite(&sprite2, 2*4*2); // 3rd 256 colour sprites
-    sprite2.x = 100; sprite2.y = 30;
+    InitSprite(&player, 0);
+    player.x = 10; player.y = 10;
+   
+    initEnemies();
 
 	while (1) 
     {
-        GetInput(&sprite1);
-        UpdateSprite(&sprite1);
-        UpdateSprite(&sprite2);
+        GetInput(&player);
+        UpdateSprite(&player);
+        
+        updateEnemies();
 
 		VBlankIntrWait();
         
