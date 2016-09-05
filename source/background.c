@@ -90,7 +90,7 @@ void InitMap()
 
     int count = 0;
     for(int i=0;i<32*32;++i)
-	    *(sm_parallaxMap + i) = rand(1, 100) > 1 ? 0 : 12 + (count++ % 4);
+	    *(sm_parallaxMap + i) = rand(1, 100) > 1 ? 0 : 12 + (count++ % 3);
 }
 
 int sm_current = 0;
