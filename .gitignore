@@ -28,7 +28,14 @@ build/
 *.i*86
 *.x86_64
 *.hex
+*.gba
 
 # Debug files
 *.dSYM/
 *.su
+
+# Visual Studio Project
+.vs
+*.VC.db
+vs2015/Debug
+vs2015/Release
