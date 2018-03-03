@@ -17,6 +17,7 @@ Entity* entity_create(int type);
 void entity_free(Entity* e);
 void entity_set_sprite(Entity* e, int idx);
 
+void entities_update_all();
 
 
 #endif // _ENTITIES_H_
