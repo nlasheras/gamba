@@ -8,6 +8,10 @@
 Enemy sm_enemies[MAX_ENEMIES];
 int sm_enemyCount = 0;
 
+const int enemyFrames[2] = { 4, 5 };
+const int numFrames = sizeof(enemyFrames) / sizeof(int);
+const int ENEMY_ANIMATION_TIME = 15;
+
 int findEmptyEnemy()
 {
     for(int i=0;i<MAX_ENEMIES;++i)
@@ -22,14 +26,15 @@ void initEnemy(int x, int y)
     if (idx == -1)
         return;
 
-    sm_enemies[idx].enabled = true;
+	Enemy* enemy = &(sm_enemies[idx]);
+	enemy->enabled = true;
 
-    // enemy is the 3rd 256 colour sprite
-    InitSprite(&(sm_enemies[idx].sprite), 4*SPRITE_OFFSET); 
-    sm_enemies[idx].sprite.x = x; 
-    sm_enemies[idx].sprite.y = y;
-    
-    UpdateSprite(&(sm_enemies[idx].sprite));
+    InitSprite(&(enemy->sprite), 4*SPRITE_OFFSET); 
+    enemy->sprite.x = x; 
+    enemy->sprite.y = y;
+	enemy->animationTime = 0;
+	enemy->frame = 0;
+    UpdateSprite(&(enemy->sprite));
 
     ++sm_enemyCount;
 }
@@ -63,7 +68,7 @@ void UpdateEnemies()
             continue;
         
         enemy->sprite.x -= 1;
-
+		UpdateEnemyAnimation(enemy);
         UpdateSprite(&(enemy->sprite));
 
         if (enemy->sprite.x < -16)
@@ -77,3 +82,16 @@ void UpdateEnemies()
     }
 }
 
+void UpdateEnemyAnimation(Enemy* enemy)
+{
+	enemy->animationTime++;
+	if (enemy->animationTime >= ENEMY_ANIMATION_TIME)
+	{
+		const int newFrame = (enemy->frame + 1) % numFrames;
+		Sprite* sprite = &(enemy->sprite);
+		FreeSprite(sprite);
+		InitSprite(sprite, enemyFrames[newFrame] * SPRITE_OFFSET);
+		enemy->animationTime = 0;
+		enemy->frame = newFrame;
+	}
+}

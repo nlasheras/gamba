@@ -8,9 +8,12 @@ typedef struct {
     Sprite sprite;
     int hp;
     bool enabled;
+	int frame;
+	int animationTime;
 } Enemy;
  
 void InitEnemies();
 void UpdateEnemies();
+void UpdateEnemyAnimation(Enemy* enemy);
 
 #endif // _ENEMIES_H_
