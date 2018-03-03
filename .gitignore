@@ -29,6 +29,7 @@ build/
 *.x86_64
 *.hex
 *.gba
+*.sav
 
 # Debug files
 *.dSYM/
@@ -36,6 +37,15 @@ build/
 
 # Visual Studio Project
 .vs
+*.vcxproj.user
 *.VC.db
+*.DotSettings.user
+
 vs2015/Debug
 vs2015/Release
+*.args.json
+
+# My WIP files
+theme_v2/
+tasks.txt
+memory_map.txt
