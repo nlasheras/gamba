@@ -2,18 +2,21 @@
 #ifndef _ENEMIES_H_
 #define _ENEMIES_H_
 
-#include "sprites.h" 
+#include "entities.h"
 
 typedef struct {
-    Sprite sprite;
+    Entity* entity;
     int hp;
-    bool enabled;
 	int frame;
 	int animationTime;
 } Enemy;
  
-void InitEnemies();
-void UpdateEnemies();
-void UpdateEnemyAnimation(Enemy* enemy);
+void enemies_init_all();
+void enemies_update_all();
+
+Enemy* enemy_create(int x, int y);
+void enemy_free(Enemy* e);
+
+void enemy_update_animation_internal(Enemy* e);
 
 #endif // _ENEMIES_H_

@@ -6,82 +6,94 @@
 #include "bullets.h"
 #include "collision.h"
 #include "explosions.h"
+#include "entities.h"
 
 #define MAX_ENEMIES 16
 Enemy sm_enemies[MAX_ENEMIES];
 int sm_enemyCount = 0;
 
-const int enemyFrames[2] = { 4, 5 };
-const int numFrames = sizeof(enemyFrames) / sizeof(int);
+const int sm_enemyFrameIdx[2] = { 4, 5 };
+const int sm_numEnemyFrames = sizeof(sm_enemyFrameIdx) / sizeof(int);
 const int ENEMY_ANIMATION_TIME = 15;
 
-int findEmptyEnemy()
+int enemy_pool_find_first_empty()
 {
     for(int i=0;i<MAX_ENEMIES;++i)
-        if (!sm_enemies[i].enabled)
+        if (sm_enemies[i].entity == NULL)
             return i;
     return -1;
 }
 
-void initEnemy(int x, int y)
+Enemy* enemy_create(int x, int y)
 {
-    int idx = findEmptyEnemy();
+    const int idx = enemy_pool_find_first_empty();
     if (idx == -1)
-        return;
+        return NULL;
+
+	Entity* entity = entity_create(ENTITY_ENEMY);
+	if (entity == NULL)
+		return NULL;
 
 	Enemy* enemy = &(sm_enemies[idx]);
-	enemy->enabled = true;
+	enemy->entity = entity;
 
-    InitSprite(&(enemy->sprite), 4*SPRITE_OFFSET); 
-    enemy->sprite.x = x; 
-    enemy->sprite.y = y;
+	entity_set_sprite(enemy->entity, 4);
+    enemy->entity->x = x; 
+    enemy->entity->y = y;
 	enemy->animationTime = 0;
 	enemy->frame = 0;
-    UpdateSprite(&(enemy->sprite));
 
     ++sm_enemyCount;
+
+	return enemy;
 }
 
-void freeEnemy(Enemy* enemy)
+void enemy_free(Enemy* enemy)
 {
-    enemy->enabled = false;
-    
-    FreeSprite(&enemy->sprite);
+    entity_free(enemy->entity);
+    enemy->entity = NULL;
     
     --sm_enemyCount;
 }
 
-void InitEnemies()
+void enemies_init_all()
 {
+	for (int i = 0; i < MAX_ENEMIES; ++i)
+	{
+		sm_enemies[i].entity = NULL;
+	}
+
     int count = rand(1, 6);
-    for (int i=0;i<count;++i)
+    for (int i = 0; i < count; ++i)
     {
-        int x = 100 + 20*i;
-        int y = rand(10, 150-16);
-        initEnemy(x, y);
+		int x = 100 + 20 * i;
+		int y = rand(10, 150 - 16);
+        enemy_create(x, y);
     }
 }
 
-void UpdateEnemies()
+void enemies_update_all()
 {
     for(int i=0;i<MAX_ENEMIES;++i)
     {
         Enemy* enemy = &(sm_enemies[i]);
-        if (!enemy->enabled)
+        if (enemy->entity == NULL)
             continue;
         
-        enemy->sprite.x -= 1;
-		UpdateEnemyAnimation(enemy);
-        UpdateSprite(&(enemy->sprite));
+        enemy->entity->x -= 1;
 
-        if (enemy->sprite.x < -16)
-            freeEnemy(enemy);
+		if (enemy->entity->x < -16)
+		{
+			enemy_free(enemy);
+		}
+		
+    	enemy_update_animation_internal(enemy);
 
 		Bullet* b = TestCollision(enemy);
 		if (b != NULL)
 		{
-			InitExplosion(enemy->sprite.x, enemy->sprite.y);
-			freeEnemy(enemy);
+			InitExplosion(enemy->entity->x, enemy->entity->y);
+			enemy_free(enemy);
 			FreeBullet(b);
 		}
     }
@@ -89,19 +101,17 @@ void UpdateEnemies()
     if (sm_enemyCount < 8)
     {
         if (rand(0, 100) < 1)
-            initEnemy(240, rand(10, 150-16));
+            enemy_create(240, rand(10, 150-16));
     }
 }
 
-void UpdateEnemyAnimation(Enemy* enemy)
+void enemy_update_animation_internal(Enemy* enemy)
 {
 	enemy->animationTime++;
 	if (enemy->animationTime >= ENEMY_ANIMATION_TIME)
 	{
-		const int newFrame = (enemy->frame + 1) % numFrames;
-		Sprite* sprite = &(enemy->sprite);
-		FreeSprite(sprite);
-		InitSprite(sprite, enemyFrames[newFrame] * SPRITE_OFFSET);
+		const int newFrame = (enemy->frame + 1) % sm_numEnemyFrames;
+		entity_set_sprite(enemy->entity, sm_enemyFrameIdx[newFrame]);
 		enemy->animationTime = 0;
 		enemy->frame = newFrame;
 	}

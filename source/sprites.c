@@ -53,6 +53,11 @@ void InitSprite(Sprite* sprite, int gfxID)
     oam->attribute[2] = gfxID;
 }
 
+void SetSprite(Sprite* sprite, int gfxID)
+{
+	sprite->oam->attribute[2] = gfxID;
+}
+
 void FreeSprite(Sprite* sprite)
 {
     sprite->oam->attribute[0] = OBJ_DISABLE;

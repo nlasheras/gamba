@@ -63,7 +63,7 @@ int main_game(void)
     InitSprite(&player, 0);
     player.x = 10; player.y = 10;
    
-    InitEnemies();
+    enemies_init_all();
 
 	while (1) 
     {
@@ -71,8 +71,9 @@ int main_game(void)
         UpdateSprite(&player);
         
 		UpdateBullets();
-        UpdateEnemies();
+        enemies_update_all();
 		UpdateExplosions();
+		entities_update_all();
 
 		VBlankIntrWait();
         

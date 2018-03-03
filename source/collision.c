@@ -8,8 +8,8 @@ bool collision(const Bullet* b, const Enemy* e)
 	const int bx = b->sprite.x + 8;
 	const int by = b->sprite.y + 8;
 
-	const int ex = e->sprite.x;
-	const int ey = e->sprite.y;
+	const int ex = e->entity->x;
+	const int ey = e->entity->y;
 	const int ew = 16;
 	const int eh = 16;
 
