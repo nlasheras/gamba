@@ -4,7 +4,7 @@
 
 #include "entities.h"
 
-typedef struct {
+typedef struct _bullet {
 	Entity* entity;
 } Bullet;
 

@@ -30,6 +30,7 @@ Bullet* bullet_create(int x, int y)
 	entity->y = y;
 
 	entity_set_sprite(entity, 1);
+	collision_init(&entity->collider, 5, 7, 3, 3);
 
 	return bullet;
 }

@@ -4,7 +4,7 @@
 
 #include "entities.h"
 
-typedef struct {
+typedef struct _enemy {
     Entity* entity;
     int hp;
 	int frame;

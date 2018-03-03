@@ -51,6 +51,9 @@ void entities_update_all()
 			e->sprite.x = e->x;
 			e->sprite.y = e->y;
 			sprite_update(&(e->sprite));
+
+			e->collider.x = e->x;
+			e->collider.y = e->y;
         }
     }
 }

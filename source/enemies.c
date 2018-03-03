@@ -42,6 +42,8 @@ Enemy* enemy_create(int x, int y)
 	enemy->animationTime = 0;
 	enemy->frame = 0;
 
+	collision_init(&entity->collider, 0, 0, 16, 16);
+
     ++sm_enemyCount;
 
 	return enemy;
@@ -88,7 +90,7 @@ void enemies_update_all()
 		
     	enemy_update_animation_internal(enemy);
 
-		Bullet* b = TestCollision(enemy);
+		Bullet* b = collisions_test_all_bullets(enemy);
 		if (b != NULL)
 		{
 			explosion_create(enemy->entity->x, enemy->entity->y);

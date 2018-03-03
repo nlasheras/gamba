@@ -3,6 +3,7 @@
 #define _ENTITIES_H_
 
 #include "sprites.h" 
+#include "collision.h"
 
 typedef enum
 {
@@ -11,11 +12,12 @@ typedef enum
 	ENTITY_EXPLOSION
 } EntityType;
 
-typedef struct {
+typedef struct _entity {
     Sprite sprite;
     bool enabled;
 	int x, y;
 	EntityType type;
+	Collider collider;
 } Entity;
  
 Entity* entity_create(EntityType type);
