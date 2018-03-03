@@ -10,6 +10,7 @@ typedef struct {
 } Bullet;
 
 void InitBullet(int x, int y);
+void FreeBullet(Bullet* b);
 void UpdateBullets();
 
 #endif // _BULLET_H_

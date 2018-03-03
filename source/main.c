@@ -5,6 +5,7 @@
 #include "random.h"
 #include "enemies.h"
 #include "bullets.h"
+#include "explosions.h"
 
 #define IS_KEY_PRESSED(k) (!(REG_KEYINPUT & (k)))
 
@@ -71,6 +72,7 @@ int main_game(void)
         
 		UpdateBullets();
         UpdateEnemies();
+		UpdateExplosions();
 
 		VBlankIntrWait();
         

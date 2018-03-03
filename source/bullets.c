@@ -30,11 +30,11 @@ void InitBullet(int x, int y)
 	UpdateSprite(&(bullet->sprite));
 }
 
-void freeBullet(Bullet* enemy)
+void FreeBullet(Bullet* bullet)
 {
-	enemy->enabled = false;
+	bullet->enabled = false;
 
-	FreeSprite(&enemy->sprite);
+	FreeSprite(&bullet->sprite);
 }
 
 void UpdateBullets()
@@ -49,6 +49,6 @@ void UpdateBullets()
 		UpdateSprite(&(bullet->sprite));
 
 		if (bullet->sprite.x > SCREEN_WIDTH)
-			freeBullet(bullet);
+			FreeBullet(bullet);
 	}
 }

@@ -3,7 +3,8 @@
 #define _COLLISION_H_
 
 #include "enemies.h"
+#include "bullets.h"
 
-bool TestCollision(const Enemy* enemy);
+Bullet* TestCollision(const Enemy* enemy);
 
 #endif // _COLLISION_H_

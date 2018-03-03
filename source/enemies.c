@@ -5,6 +5,7 @@
 #include "random.h" 
 #include "bullets.h"
 #include "collision.h"
+#include "explosions.h"
 
 #define MAX_ENEMIES 16
 Enemy sm_enemies[MAX_ENEMIES];
@@ -76,9 +77,12 @@ void UpdateEnemies()
         if (enemy->sprite.x < -16)
             freeEnemy(enemy);
 
-		if (TestCollision(enemy))
+		Bullet* b = TestCollision(enemy);
+		if (b != NULL)
 		{
+			InitExplosion(enemy->sprite.x, enemy->sprite.y);
 			freeEnemy(enemy);
+			FreeBullet(b);
 		}
     }
 

@@ -17,15 +17,16 @@ bool collision(const Bullet* b, const Enemy* e)
 }
 
 extern Bullet sm_bullets[16];
-bool TestCollision(const Enemy* e)
+Bullet* TestCollision(const Enemy* e)
 {
 	for (int i = 0; i < 16; ++i)
 	{
-		if(sm_bullets[i].enabled)
+		Bullet* b = &(sm_bullets[i]);
+		if(b->enabled)
 		{
-			if (collision(&(sm_bullets[i]), e))
-				return true;
+			if (collision(b, e))
+				return b;
 		}
 	}
-	return false;
+	return NULL;
 }
