@@ -3,6 +3,8 @@
 #include "enemies.h"
 #include "sprites.h" 
 #include "random.h" 
+#include "bullets.h"
+#include "collision.h"
 
 #define MAX_ENEMIES 16
 Enemy sm_enemies[MAX_ENEMIES];
@@ -73,6 +75,11 @@ void UpdateEnemies()
 
         if (enemy->sprite.x < -16)
             freeEnemy(enemy);
+
+		if (TestCollision(enemy))
+		{
+			freeEnemy(enemy);
+		}
     }
 
     if (sm_enemyCount < 8)

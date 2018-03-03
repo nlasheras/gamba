@@ -36,6 +36,9 @@
     <ClCompile Include="..\source\bullets.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\collision.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\background.h">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\bullets.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\collision.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
