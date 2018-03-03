@@ -54,13 +54,13 @@ int main_game(void)
     REG_DISPCNT |= OBJ_ENABLE;
     REG_DISPCNT |= BG0_ENABLE | BG1_ENABLE;
 
-    InitOAM();
-    LoadSpriteSheet();
+    sprites_init_OAM();
+    sprites_load_sprite_sheet();
     background_init();
 
     Sprite player;
 
-    InitSprite(&player, 0);
+    sprite_init(&player, 0);
     player.x = 10; player.y = 10;
    
     enemies_init_all();
@@ -68,7 +68,7 @@ int main_game(void)
 	while (1) 
     {
         GetInput(&player);
-        UpdateSprite(&player);
+        sprite_update(&player);
         
 		bullets_update_all();
         enemies_update_all();
@@ -77,7 +77,7 @@ int main_game(void)
 
 		VBlankIntrWait();
         
-        UpdateOAM();
+        sprites_update_OAM();
         background_update();
 
 		if (sm_ticksUntilShoot > 0)

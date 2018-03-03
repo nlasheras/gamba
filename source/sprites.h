@@ -14,13 +14,13 @@ typedef struct
    int gfxID;
 } Sprite;
 
-void InitOAM();
-void LoadSpriteSheet();
-void UpdateOAM();
+void sprites_init_OAM();
+void sprites_load_sprite_sheet();
+void sprites_update_OAM();
 
-void InitSprite(Sprite* sprite, int gfxID);
-void UpdateSprite(Sprite* sprite);
-void FreeSprite(Sprite* sprite);
-void SetSprite(Sprite* sprite, int gfxID);
+void sprite_init(Sprite* sprite, int gfxID);
+void sprite_update(Sprite* sprite);
+void sprite_free(Sprite* sprite);
+void sprite_set_gfx(Sprite* sprite, int gfxID);
 
 #endif // _SPRITES_H_

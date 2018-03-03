@@ -24,21 +24,21 @@ Entity* entity_create(int type)
 	e->enabled = true;
 	e->type = type;
 
-	InitSprite(&(e->sprite), DEFAULT_GFX_ID);
+	sprite_init(&(e->sprite), DEFAULT_GFX_ID);
 
 	return e;
 }
 
 void entity_set_sprite(Entity* e, int idx)
 {
-	SetSprite(&(e->sprite), idx * SPRITE_OFFSET);
+	sprite_set_gfx(&(e->sprite), idx * SPRITE_OFFSET);
 }
 
 void entity_free(Entity* e)
 {
     e->enabled = false;
     
-    FreeSprite(&e->sprite);
+    sprite_free(&e->sprite);
 }
 
 void entities_update_all()
@@ -50,7 +50,7 @@ void entities_update_all()
         {
 			e->sprite.x = e->x;
 			e->sprite.y = e->y;
-			UpdateSprite(&(e->sprite));
+			sprite_update(&(e->sprite));
         }
     }
 }

@@ -9,43 +9,43 @@
 
 #include "test_sheet_pcx.h"
 
-SpriteEntry OAMCopy[128];
+SpriteEntry sm_OAMCopy[128];
 
 #define USE_DMA
 
-void InitOAM()
+void sprites_init_OAM()
 {
     for(int i = 0; i < 128; i++)
-        OAMCopy[i].attribute[0] = OBJ_DISABLE;
+        sm_OAMCopy[i].attribute[0] = OBJ_DISABLE;
 }
 
-void UpdateOAM()
+void sprites_update_OAM()
 {
     const int oamSize = 128 * sizeof(SpriteEntry);
 #ifdef USE_DMA
-    dmaCopy(OAMCopy, OAM, oamSize);
+    dmaCopy(sm_OAMCopy, OAM, oamSize);
 #else
     for(int i = 0; i < size/4 ; i++)
-        ((u32*)OAM)[i] = ((u32*)OAMCopy)[i];
+        ((u32*)OAM)[i] = ((u32*)sm_OAMCopy)[i];
 #endif
 }
 
-int findFreeSprite()
+int oam_pool_find_fist_empty()
 {
     for(int i = 0; i < 128; i++)
-        if (OAMCopy[i].attribute[0] == OBJ_DISABLE)
+        if (sm_OAMCopy[i].attribute[0] == OBJ_DISABLE)
             return i;
 
     return -1;
 }
 
-void InitSprite(Sprite* sprite, int gfxID)
+void sprite_init(Sprite* sprite, int gfxID)
 {
-    const int oamIdx = findFreeSprite();
+    const int oamIdx = oam_pool_find_fist_empty();
 
     sprite->gfxID = gfxID;
     
-    SpriteEntry* oam = &OAMCopy[oamIdx];
+    SpriteEntry* oam = &sm_OAMCopy[oamIdx];
     sprite->oam = oam;
 
     oam->attribute[0] = OBJ_256_COLOR | OBJ_SHAPE(0);  
@@ -53,18 +53,18 @@ void InitSprite(Sprite* sprite, int gfxID)
     oam->attribute[2] = gfxID;
 }
 
-void SetSprite(Sprite* sprite, int gfxID)
+void sprite_set_gfx(Sprite* sprite, int gfxID)
 {
 	sprite->oam->attribute[2] = gfxID;
 }
 
-void FreeSprite(Sprite* sprite)
+void sprite_free(Sprite* sprite)
 {
     sprite->oam->attribute[0] = OBJ_DISABLE;
+	sprite->oam = NULL;
 }
 
-// Update the sprites OAM entry to reflect new position
-void UpdateSprite(Sprite* sprite)
+void sprite_update(Sprite* sprite)
 {
    sprite->oam->attribute[1] &= 0xFE00;
    sprite->oam->attribute[1] |= (sprite->x & 0x01FF);
@@ -73,7 +73,7 @@ void UpdateSprite(Sprite* sprite)
    sprite->oam->attribute[0] |= (sprite->y & 0x00FF);
 }
 
-void CopyTiles(const u8* src, u16* dst, int width, int height)
+void sprites_internal_copy_tiles(const u8* src, u16* dst, int width, int height)
 {
     const int stride = width;
 	for (int tj = 0; tj < height / 16; ++tj)
@@ -97,12 +97,12 @@ void CopyTiles(const u8* src, u16* dst, int width, int height)
 	}
 }
 
-void LoadSpriteSheet()
+void sprites_load_sprite_sheet()
 {
     Image sheet;
     Image_LoadPCX(&sheet, test_sheet_pcx);
     
-    CopyTiles(sheet.data, SPRITE_GFX, sheet.width, sheet.height);
+    sprites_internal_copy_tiles(sheet.data, SPRITE_GFX, sheet.width, sheet.height);
 
     for(int i = 0; i < 256; i++)
         SPRITE_PALETTE[i] = sheet.palette[i];

@@ -26,19 +26,19 @@ void InitExplosion(int x, int y)
 	Explosion* fx = &(sm_explosions[idx]);
 	fx->enabled = true;
 
-	InitSprite(&(fx->sprite), 8 * SPRITE_OFFSET);
+	sprite_init(&(fx->sprite), 8 * SPRITE_OFFSET);
 	fx->sprite.x = x;
 	fx->sprite.y = y;
 	fx->animationTime = 0;
 	fx->frame = 0;
-	UpdateSprite(&(fx->sprite));
+	sprite_update(&(fx->sprite));
 }
 
 void freeExplosion(Explosion* fx)
 {
 	fx->enabled = false;
 
-	FreeSprite(&fx->sprite);
+	sprite_free(&fx->sprite);
 }
 
 void UpdateExplosions()
@@ -62,13 +62,12 @@ void UpdateExplosions()
 			else
 			{
 				Sprite* sprite = &(fx->sprite);
-				FreeSprite(sprite);
-				InitSprite(sprite, explosionFrames[newFrame] * SPRITE_OFFSET);
+				sprite_set_gfx(sprite, explosionFrames[newFrame] * SPRITE_OFFSET);
 				fx->animationTime = 0;
 				fx->frame = newFrame;
 			}
 		}
 
-		UpdateSprite(&(fx->sprite));
+		sprite_update(&(fx->sprite));
 	}
 }
