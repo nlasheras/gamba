@@ -72,7 +72,7 @@ int main_game(void)
         
 		bullets_update_all();
         enemies_update_all();
-		UpdateExplosions();
+		explosions_update_all();
 		entities_update_all();
 
 		VBlankIntrWait();

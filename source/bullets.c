@@ -1,11 +1,11 @@
-#include <gba.h> 
-
 #include "bullets.h"
+
+#include <gba.h> 
 
 #define MAX_BULLETS 16
 Bullet sm_bullets[MAX_BULLETS];
 
-int bullet_pool_find_first_empty()
+int bullets_pool_find_first_empty()
 {
 	for (int i = 0; i < MAX_BULLETS; ++i)
 		if (sm_bullets[i].entity == NULL)
@@ -15,11 +15,11 @@ int bullet_pool_find_first_empty()
 
 Bullet* bullet_create(int x, int y)
 {
-	const int idx = bullet_pool_find_first_empty();
+	const int idx = bullets_pool_find_first_empty();
 	if (idx == -1)
 		return NULL;
 
-	Entity* entity = entity_create(2);
+	Entity* entity = entity_create(ENTITY_BULLET);
 	if (entity == NULL)
 		return NULL;
 

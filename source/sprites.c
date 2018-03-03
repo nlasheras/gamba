@@ -3,9 +3,6 @@
 
 #include <gba_video.h>
 #include <gba_dma.h>
-#include <pcx.h>
-
-#include <stdlib.h>
 
 #include "test_sheet_pcx.h"
 
@@ -100,13 +97,13 @@ void sprites_internal_copy_tiles(const u8* src, u16* dst, int width, int height)
 void sprites_load_sprite_sheet()
 {
     Image sheet;
-    Image_LoadPCX(&sheet, test_sheet_pcx);
+    image_load_pcx(&sheet, test_sheet_pcx);
     
     sprites_internal_copy_tiles(sheet.data, SPRITE_GFX, sheet.width, sheet.height);
 
     for(int i = 0; i < 256; i++)
         SPRITE_PALETTE[i] = sheet.palette[i];
 
-    Image_Free(&sheet);
+    image_free(&sheet);
 }
 

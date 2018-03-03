@@ -61,14 +61,14 @@ void internal_copy_background_tiles_to_VRAM(Image* image)
 void internal_load_sprite_sheet()
 {
     Image sheet;
-    Image_LoadPCX(&sheet, background_sheet_pcx);
+    image_load_pcx(&sheet, background_sheet_pcx);
     
     internal_copy_background_tiles_to_VRAM(&sheet);
 
     for(int i = 0; i < 256; i++)
         BG_COLORS[i] = sheet.palette[i];
 
-    Image_Free(&sheet);
+    image_free(&sheet);
 }
 
 void background_init()

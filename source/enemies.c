@@ -1,12 +1,11 @@
-#include <gba.h> 
-
 #include "enemies.h"
-#include "sprites.h" 
 #include "random.h" 
 #include "bullets.h"
 #include "collision.h"
 #include "explosions.h"
 #include "entities.h"
+
+#include <gba.h> 
 
 #define MAX_ENEMIES 16
 Enemy sm_enemies[MAX_ENEMIES];
@@ -16,7 +15,7 @@ const int sm_enemyFrameIdx[2] = { 4, 5 };
 const int sm_numEnemyFrames = sizeof(sm_enemyFrameIdx) / sizeof(int);
 const int ENEMY_ANIMATION_TIME = 15;
 
-int enemy_pool_find_first_empty()
+int enemies_pool_find_first_empty()
 {
     for(int i=0;i<MAX_ENEMIES;++i)
         if (sm_enemies[i].entity == NULL)
@@ -26,7 +25,7 @@ int enemy_pool_find_first_empty()
 
 Enemy* enemy_create(int x, int y)
 {
-    const int idx = enemy_pool_find_first_empty();
+    const int idx = enemies_pool_find_first_empty();
     if (idx == -1)
         return NULL;
 
@@ -92,7 +91,7 @@ void enemies_update_all()
 		Bullet* b = TestCollision(enemy);
 		if (b != NULL)
 		{
-			InitExplosion(enemy->entity->x, enemy->entity->y);
+			explosion_create(enemy->entity->x, enemy->entity->y);
 			enemy_free(enemy);
 			bullet_free(b);
 		}

@@ -4,16 +4,21 @@
 
 #include "sprites.h" 
 
-#define ENTITY_ENEMY 1
+typedef enum
+{
+	ENTITY_ENEMY,
+	ENTITY_BULLET,
+	ENTITY_EXPLOSION
+} EntityType;
 
 typedef struct {
     Sprite sprite;
     bool enabled;
 	int x, y;
-	int type;
+	EntityType type;
 } Entity;
  
-Entity* entity_create(int type);
+Entity* entity_create(EntityType type);
 void entity_free(Entity* e);
 void entity_set_sprite(Entity* e, int idx);
 

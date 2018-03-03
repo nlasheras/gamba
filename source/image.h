@@ -11,8 +11,8 @@ typedef struct {
     int  height;
 } Image;
 
-void Image_LoadPCX(Image* image, const u8* pcx);
-void Image_Free(Image* image);
+void image_load_pcx(Image* image, const u8* pcx);
+void image_free(Image* image);
 
 #endif // _IMAGE_H_
 

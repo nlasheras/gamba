@@ -2,16 +2,16 @@
 #ifndef _EXPLOSION_H_
 #define _EXPLOSION_H_
 
-#include "sprites.h" 
+#include "entities.h"
 
 typedef struct {
-	Sprite sprite;
-	bool enabled;
+	Entity* entity;
 	int frame;
 	int animationTime;
 } Explosion;
 
-void InitExplosion(int x, int y);
-void UpdateExplosions();
+Explosion* explosion_create(int x, int y);
+
+void explosions_update_all();
 
 #endif // _EXPLOSION_H_

@@ -1,73 +1,74 @@
-#include <gba.h> 
-
 #include "explosions.h"
 
 #define MAX_EXPLOSIONS 16
 Explosion sm_explosions[MAX_EXPLOSIONS];
 
-const int explosionFrames[4] = { 8, 9, 10, 11 };
-const int numExplosionFrames = sizeof(explosionFrames) / sizeof(int);
+const int sm_explosionFrameIdx[4] = { 8, 9, 10, 11 };
+const int sm_numExplosionFrames = sizeof(sm_explosionFrameIdx) / sizeof(int);
 const int EXPLOSION_ANIMATION_TIME = 7;
 
-int findEmptyExplosion()
+int explosions_pool_find_first_empty()
 {
 	for (int i = 0; i<MAX_EXPLOSIONS; ++i)
-		if (!sm_explosions[i].enabled)
+		if (sm_explosions[i].entity == NULL)
 			return i;
 	return -1;
 }
 
-void InitExplosion(int x, int y)
+Explosion* explosion_create(int x, int y)
 {
-	int idx = findEmptyExplosion();
+	const int idx = explosions_pool_find_first_empty();
 	if (idx == -1)
-		return;
+		return NULL;
+
+	Entity* entity = entity_create(ENTITY_EXPLOSION);
+	if (entity == NULL)
+		return NULL;
 
 	Explosion* fx = &(sm_explosions[idx]);
-	fx->enabled = true;
+	fx->entity = entity;
 
-	sprite_init(&(fx->sprite), 8 * SPRITE_OFFSET);
-	fx->sprite.x = x;
-	fx->sprite.y = y;
+	entity_set_sprite(entity, 8);
+	entity->x = x;
+	entity->y = y;
 	fx->animationTime = 0;
 	fx->frame = 0;
-	sprite_update(&(fx->sprite));
+
+	return fx;
 }
 
-void freeExplosion(Explosion* fx)
+void explosion_free(Explosion* fx)
 {
-	fx->enabled = false;
-
-	sprite_free(&fx->sprite);
+	entity_free(fx->entity);
+	fx->entity = NULL;
 }
 
-void UpdateExplosions()
+void explosions_update_all()
 {
-	for (int i = 0; i<MAX_EXPLOSIONS; ++i)
+	for (int i = 0; i < MAX_EXPLOSIONS; ++i)
 	{
 		Explosion* fx = &(sm_explosions[i]);
-		if (!fx->enabled)
-			continue;
-		fx->sprite.x -= 1;
-
-		fx->animationTime++;
-		if (fx->animationTime >= EXPLOSION_ANIMATION_TIME)
+		if (fx->entity)
 		{
-			const int newFrame = fx->frame + 1;
-			if (newFrame >= numExplosionFrames)
+			fx->entity->x -= 1;
+
+			fx->animationTime++;
+
+			if (fx->animationTime >= EXPLOSION_ANIMATION_TIME)
 			{
-				freeExplosion(fx);
-				continue;
-			}
-			else
-			{
-				Sprite* sprite = &(fx->sprite);
-				sprite_set_gfx(sprite, explosionFrames[newFrame] * SPRITE_OFFSET);
-				fx->animationTime = 0;
-				fx->frame = newFrame;
+				const int newFrame = fx->frame + 1;
+				if (newFrame >= sm_numExplosionFrames)
+				{
+					explosion_free(fx);
+					continue;
+				}
+				else
+				{
+					entity_set_sprite(fx->entity, sm_explosionFrameIdx[newFrame]);
+					fx->animationTime = 0;
+					fx->frame = newFrame;
+				}
 			}
 		}
-
-		sprite_update(&(fx->sprite));
 	}
 }

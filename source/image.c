@@ -7,7 +7,7 @@
 
 typedef struct { unsigned char r, g, b; } pcx_rgb24;
 
-void Image_LoadPCX(Image* image, const u8* pcx)
+void image_load_pcx(Image* image, const u8* pcx)
 {
     pcx_rgb24* pal;
 
@@ -54,7 +54,7 @@ void Image_LoadPCX(Image* image, const u8* pcx)
     }
 }
 
-void Image_Free(Image* image)
+void image_free(Image* image)
 {
     free(image->data);
     free(image->palette);

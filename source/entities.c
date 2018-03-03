@@ -14,7 +14,7 @@ int entity_find_first_free_index()
 	return -1;
 }
 
-Entity* entity_create(int type)
+Entity* entity_create(EntityType type)
 {
     const int idx = entity_find_first_free_index();
     if (idx == -1)
