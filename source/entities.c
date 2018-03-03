@@ -14,7 +14,7 @@ int entity_find_first_free_index()
 	return -1;
 }
 
-Entity* entity_create(EntityType type)
+Entity* entity_create(EntityType type, void* child)
 {
     const int idx = entity_find_first_free_index();
     if (idx == -1)
@@ -23,6 +23,7 @@ Entity* entity_create(EntityType type)
 	Entity* e = &(sm_entities[idx]);
 	e->enabled = true;
 	e->type = type;
+	e->child = child;
 
 	sprite_init(&(e->sprite), DEFAULT_GFX_ID);
 
@@ -37,6 +38,7 @@ void entity_set_sprite(Entity* e, int idx)
 void entity_free(Entity* e)
 {
     e->enabled = false;
+	e->child = NULL;
     
     sprite_free(&e->sprite);
 }
@@ -56,4 +58,32 @@ void entities_update_all()
 			e->collider.y = e->y;
         }
     }
+}
+
+int entities_get_count(EntityType type)
+{
+	int count = 0;
+	for (int i = 0; i < MAX_ENTITIES; ++i)
+	{
+		Entity* e = &(sm_entities[i]);
+		if (e->type == type && e->enabled)
+			++count;
+	}
+	return count;
+}
+
+Entity* entities_get(EntityType type, int index)
+{
+	int count = 0;
+	for (int i = 0; i < MAX_ENTITIES; ++i)
+	{
+		Entity* e = &(sm_entities[i]);
+		if (e->enabled && e->type == type)
+		{
+			if (count == index)
+				return e;
+			++count;
+		}
+	}
+	return NULL;
 }

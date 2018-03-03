@@ -21,11 +21,11 @@ Explosion* explosion_create(int x, int y)
 	if (idx == -1)
 		return NULL;
 
-	Entity* entity = entity_create(ENTITY_EXPLOSION);
+	Explosion* fx = &(sm_explosions[idx]);
+	Entity* entity = entity_create(ENTITY_EXPLOSION, fx);
 	if (entity == NULL)
 		return NULL;
 
-	Explosion* fx = &(sm_explosions[idx]);
 	fx->entity = entity;
 
 	entity_set_sprite(entity, 8);

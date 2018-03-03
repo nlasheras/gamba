@@ -1,6 +1,6 @@
 #include "enemies.h"
+#include "enemies_internal.h"
 #include "random.h" 
-#include "bullets.h"
 #include "collision.h"
 #include "explosions.h"
 #include "entities.h"
@@ -29,11 +29,11 @@ Enemy* enemy_create(int x, int y)
     if (idx == -1)
         return NULL;
 
-	Entity* entity = entity_create(ENTITY_ENEMY);
+	Enemy* enemy = &(sm_enemies[idx]);
+	Entity* entity = entity_create(ENTITY_ENEMY, enemy);
 	if (entity == NULL)
 		return NULL;
 
-	Enemy* enemy = &(sm_enemies[idx]);
 	enemy->entity = entity;
 
 	entity_set_sprite(enemy->entity, 4);
@@ -73,6 +73,20 @@ void enemies_init_all()
     }
 }
 
+Bullet* enemy_test_collision_bullets(Enemy* e)
+{
+	const int numBullets = entities_get_count(ENTITY_BULLET);
+	for (int i = 0; i < numBullets; ++i)
+	{
+		Entity* entity_bullet = entities_get(ENTITY_BULLET, i);
+		if (entity_bullet && collision_test(entity_bullet, e->entity))
+		{
+			return (Bullet*)(entity_bullet->child);
+		}
+	}
+	return NULL;
+}
+
 void enemies_update_all()
 {
     for(int i=0;i<MAX_ENEMIES;++i)
@@ -88,9 +102,9 @@ void enemies_update_all()
 			enemy_free(enemy);
 		}
 		
-    	enemy_update_animation_internal(enemy);
+    	enemy_update_animation(enemy);
 
-		Bullet* b = collisions_test_all_bullets(enemy);
+		Bullet* b = enemy_test_collision_bullets(enemy);
 		if (b != NULL)
 		{
 			explosion_create(enemy->entity->x, enemy->entity->y);
@@ -106,7 +120,7 @@ void enemies_update_all()
     }
 }
 
-void enemy_update_animation_internal(Enemy* enemy)
+void enemy_update_animation(Enemy* enemy)
 {
 	enemy->animationTime++;
 	if (enemy->animationTime >= ENEMY_ANIMATION_TIME)

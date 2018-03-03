@@ -19,18 +19,18 @@ Bullet* bullet_create(int x, int y)
 	if (idx == -1)
 		return NULL;
 
-	Entity* entity = entity_create(ENTITY_BULLET);
+	Bullet* bullet = &(sm_bullets[idx]);
+	Entity* entity = entity_create(ENTITY_BULLET, bullet);
 	if (entity == NULL)
 		return NULL;
 
-	Bullet* bullet = &(sm_bullets[idx]);
 	bullet->entity = entity;
 	
 	entity->x = x;
 	entity->y = y;
 
 	entity_set_sprite(entity, 1);
-	collision_init(&entity->collider, 5, 7, 3, 3);
+	collision_init(&entity->collider, 0, 7, 8, 3);
 
 	return bullet;
 }

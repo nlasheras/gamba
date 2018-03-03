@@ -1,9 +1,5 @@
-#include <gba.h> 
-
 #include "collision.h"
 #include "entities.h"
-#include "bullets.h"
-#include "enemies.h"
 
 void collision_init(Collider* c, int x, int y, int w, int h)
 {
@@ -34,19 +30,4 @@ bool collision_test(const Entity* e1, const Entity* e2)
 			(bl >= el && bl < er && bb >= et && bb < eb);
 	}
 	return false;
-}
-
-extern Bullet sm_bullets[16];
-Bullet* collisions_test_all_bullets(Enemy* e)
-{
-	for (int i = 0; i < 16; ++i)
-	{
-		Bullet* b = &(sm_bullets[i]);
-		if(b->entity != NULL)
-		{
-			if (collision_test(b->entity, e->entity))
-				return b;
-		}
-	}
-	return NULL;
 }

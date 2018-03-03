@@ -74,6 +74,9 @@
     <ClInclude Include="..\source\entities.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\enemies_internal.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Makefile" />

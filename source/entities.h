@@ -18,13 +18,16 @@ typedef struct _entity {
 	int x, y;
 	EntityType type;
 	Collider collider;
+	void* child;
 } Entity;
  
-Entity* entity_create(EntityType type);
+Entity* entity_create(EntityType type, void* child);
 void entity_free(Entity* e);
 void entity_set_sprite(Entity* e, int idx);
 
 void entities_update_all();
 
+int entities_get_count(EntityType type);
+Entity* entities_get(EntityType type, int idx);
 
 #endif // _ENTITIES_H_

@@ -35,6 +35,7 @@
     <ClInclude Include="..\source\bullets.h" />
     <ClInclude Include="..\source\collision.h" />
     <ClInclude Include="..\source\enemies.h" />
+    <ClInclude Include="..\source\enemies_internal.h" />
     <ClInclude Include="..\source\entities.h" />
     <ClInclude Include="..\source\explosions.h" />
     <ClInclude Include="..\source\image.h" />
