@@ -5,8 +5,8 @@
 
 bool collision(const Bullet* b, const Enemy* e)
 {
-	const int bx = b->sprite.x + 8;
-	const int by = b->sprite.y + 8;
+	const int bx = b->entity->x + 8;
+	const int by = b->entity->y + 8;
 
 	const int ex = e->entity->x;
 	const int ey = e->entity->y;
@@ -22,7 +22,7 @@ Bullet* TestCollision(const Enemy* e)
 	for (int i = 0; i < 16; ++i)
 	{
 		Bullet* b = &(sm_bullets[i]);
-		if(b->enabled)
+		if(b->entity != NULL)
 		{
 			if (collision(b, e))
 				return b;

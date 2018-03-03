@@ -94,7 +94,7 @@ void enemies_update_all()
 		{
 			InitExplosion(enemy->entity->x, enemy->entity->y);
 			enemy_free(enemy);
-			FreeBullet(b);
+			bullet_free(b);
 		}
     }
 

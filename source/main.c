@@ -15,7 +15,7 @@ void TryToShoot(Sprite* player)
 {
 	if (sm_ticksUntilShoot <= 0)
 	{
-		InitBullet(player->x, player->y);
+		bullet_create(player->x, player->y);
 		sm_ticksUntilShoot = DELAY_SHOOT_TICKS;
 	}
 }
@@ -56,7 +56,7 @@ int main_game(void)
 
     InitOAM();
     LoadSpriteSheet();
-    InitMap();
+    background_init();
 
     Sprite player;
 
@@ -70,7 +70,7 @@ int main_game(void)
         GetInput(&player);
         UpdateSprite(&player);
         
-		UpdateBullets();
+		bullets_update_all();
         enemies_update_all();
 		UpdateExplosions();
 		entities_update_all();
@@ -78,7 +78,7 @@ int main_game(void)
 		VBlankIntrWait();
         
         UpdateOAM();
-        UpdateScroll();
+        background_update();
 
 		if (sm_ticksUntilShoot > 0)
 			--sm_ticksUntilShoot;

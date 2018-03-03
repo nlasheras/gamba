@@ -1,54 +1,56 @@
 #include <gba.h> 
 
 #include "bullets.h"
-#include "sprites.h" 
-#include "random.h" 
 
 #define MAX_BULLETS 16
 Bullet sm_bullets[MAX_BULLETS];
 
-int findEmptyBullet()
+int bullet_pool_find_first_empty()
 {
 	for (int i = 0; i < MAX_BULLETS; ++i)
-		if (!sm_bullets[i].enabled)
+		if (sm_bullets[i].entity == NULL)
 			return i;
 	return -1;
 }
 
-void InitBullet(int x, int y)
+Bullet* bullet_create(int x, int y)
 {
-	int idx = findEmptyBullet();
+	const int idx = bullet_pool_find_first_empty();
 	if (idx == -1)
-		return;
+		return NULL;
+
+	Entity* entity = entity_create(2);
+	if (entity == NULL)
+		return NULL;
 
 	Bullet* bullet = &(sm_bullets[idx]);
-	bullet->enabled = true;
+	bullet->entity = entity;
+	
+	entity->x = x;
+	entity->y = y;
 
-	InitSprite(&(bullet->sprite), 1 * SPRITE_OFFSET);
-	bullet->sprite.x = x;
-	bullet->sprite.y = y;
-	UpdateSprite(&(bullet->sprite));
+	entity_set_sprite(entity, 1);
+
+	return bullet;
 }
 
-void FreeBullet(Bullet* bullet)
+void bullet_free(Bullet* bullet)
 {
-	bullet->enabled = false;
-
-	FreeSprite(&bullet->sprite);
+	entity_free(bullet->entity);
+	bullet->entity = NULL;
 }
 
-void UpdateBullets()
+void bullets_update_all()
 {
-	for (int i = 0; i<MAX_BULLETS; ++i)
+	for (int i = 0; i < MAX_BULLETS; ++i)
 	{
 		Bullet* bullet = &(sm_bullets[i]);
-		if (!bullet->enabled)
-			continue;
+		if (bullet->entity)
+		{
+			bullet->entity->x += 2;
 
-		bullet->sprite.x += 2;
-		UpdateSprite(&(bullet->sprite));
-
-		if (bullet->sprite.x > SCREEN_WIDTH)
-			FreeBullet(bullet);
+			if (bullet->entity->x > SCREEN_WIDTH)
+				bullet_free(bullet);
+		}
 	}
 }

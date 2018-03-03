@@ -16,7 +16,7 @@ u16* sm_backgroundMap = 0;
 
 #define USE_DMA
 
-void _generateSpritesAndPalette()
+void test_generate_sprites_and_palette()
 {
 #ifdef USE_DMA
     dmaCopy(SPRITE_PALETTE, BG_COLORS, 256*sizeof(u16));
@@ -35,7 +35,7 @@ void _generateSpritesAndPalette()
     }
 }
 
-void CopyBackgroundTilesToVRAM(Image* image)
+void internal_copy_background_tiles_to_VRAM(Image* image)
 {
     const int tileSize = 4 * 8;
     int count = 0;
@@ -58,12 +58,12 @@ void CopyBackgroundTilesToVRAM(Image* image)
     }
 }
 
-void LoadBackgroundSpriteSheet()
+void internal_load_sprite_sheet()
 {
     Image sheet;
     Image_LoadPCX(&sheet, background_sheet_pcx);
     
-    CopyBackgroundTilesToVRAM(&sheet);
+    internal_copy_background_tiles_to_VRAM(&sheet);
 
     for(int i = 0; i < 256; i++)
         BG_COLORS[i] = sheet.palette[i];
@@ -71,7 +71,7 @@ void LoadBackgroundSpriteSheet()
     Image_Free(&sheet);
 }
 
-void InitMap()
+void background_init()
 {
     sm_parallaxMap = (u16*)MAP_BASE_ADR(31);
     BGCTRL[0] = SCREEN_BASE(31) | BG_SIZE_0 | BG_256_COLOR;
@@ -81,7 +81,7 @@ void InitMap()
     BGCTRL[1] = SCREEN_BASE(15) | BG_SIZE_0 | BG_256_COLOR;
 	BG_OFFSET[1].x = 0; BG_OFFSET[1].y = 0;
 
-    LoadBackgroundSpriteSheet();
+    internal_load_sprite_sheet();
 
     // 256x256 = 32x32 tiles  
     for(int i=0;i<32*32;++i)
@@ -95,7 +95,7 @@ void InitMap()
 
 int sm_current = 0;
 int sm_scrollX = 0;
-void UpdateScroll()
+void background_update()
 {
     ++sm_scrollX;
 	BG_OFFSET[1].x = sm_scrollX / 3;

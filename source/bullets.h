@@ -2,15 +2,15 @@
 #ifndef _BULLETS_H_
 #define _BULLETS_H_
 
-#include "sprites.h" 
+#include "entities.h"
 
 typedef struct {
-	Sprite sprite;
-	bool enabled;
+	Entity* entity;
 } Bullet;
 
-void InitBullet(int x, int y);
-void FreeBullet(Bullet* b);
-void UpdateBullets();
+Bullet* bullet_create(int x, int y);
+void bullet_free(Bullet* b);
+
+void bullets_update_all();
 
 #endif // _BULLET_H_
