@@ -25,7 +25,7 @@ void initEnemy(int x, int y)
     sm_enemies[idx].enabled = true;
 
     // enemy is the 3rd 256 colour sprite
-    InitSprite(&(sm_enemies[idx].sprite), 2*4*2); 
+    InitSprite(&(sm_enemies[idx].sprite), 4*SPRITE_OFFSET); 
     sm_enemies[idx].sprite.x = x; 
     sm_enemies[idx].sprite.y = y;
     

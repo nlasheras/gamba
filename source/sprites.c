@@ -68,23 +68,28 @@ void UpdateSprite(Sprite* sprite)
    sprite->oam->attribute[0] |= (sprite->y & 0x00FF);
 }
 
-void CopyTiles(const u8* src, u16* dst, int width)
+void CopyTiles(const u8* src, u16* dst, int width, int height)
 {
     const int stride = width;
-    for(int ti=0;ti<width/16;++ti)
-    {
-        for(int n=0;n<4;++n)
-        {
-            const u8* src2 = src + ti*16 + (n/2)*8*stride + (n%2)*8;
-            u16* dst2 = dst + ti*4*8*4 + n*8*4;
-            for(int y=0;y<8;++y)
-            {
-                for(int x=0;x<4;++x){
-                    dst2[x + y*4] = src2[2*x + y*stride] | (src2[2*x+1 + y*stride] << 8);
-                }
-            }
-        }
-    }
+	for (int tj = 0; tj < height / 16; ++tj)
+	{
+		const u8* srcLine = src + tj*width*16;
+		u16* dstLine = dst + tj*width*8;
+		for (int ti = 0; ti < width / 16; ++ti)
+		{
+			for (int n = 0; n < 4; ++n)
+			{
+				const u8* src2 = srcLine + ti * 16 + (n / 2) * 8 * stride + (n % 2) * 8;
+				u16* dst2 = dstLine + ti * 4 * 8 * 4 + n * 8 * 4;
+				for (int y = 0; y < 8; ++y)
+				{
+					for (int x = 0; x < 4; ++x) {
+						dst2[x + y * 4] = src2[2 * x + y * stride] | (src2[2 * x + 1 + y * stride] << 8);
+					}
+				}
+			}
+		}
+	}
 }
 
 void LoadSpriteSheet()
@@ -92,7 +97,7 @@ void LoadSpriteSheet()
     Image sheet;
     Image_LoadPCX(&sheet, test_sheet_pcx);
     
-    CopyTiles(sheet.data, SPRITE_GFX, sheet.width);
+    CopyTiles(sheet.data, SPRITE_GFX, sheet.width, sheet.height);
 
     for(int i = 0; i < 256; i++)
         SPRITE_PALETTE[i] = sheet.palette[i];

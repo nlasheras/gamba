@@ -4,6 +4,8 @@
 
 #include <gba_sprites.h>
 
+#define SPRITE_OFFSET 8 // a 16x16 256 colour sprite uses 8 tiles
+
 typedef struct
 {
    int x,y;
