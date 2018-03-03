@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\background.c" />
+    <ClCompile Include="..\source\bullets.c" />
     <ClCompile Include="..\source\enemies.c" />
     <ClCompile Include="..\source\image.c" />
     <ClCompile Include="..\source\main.c" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\background.h" />
+    <ClInclude Include="..\source\bullets.h" />
     <ClInclude Include="..\source\enemies.h" />
     <ClInclude Include="..\source\image.h" />
     <ClInclude Include="..\source\random.h" />

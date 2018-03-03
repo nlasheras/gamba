@@ -4,8 +4,20 @@
 #include "background.h"
 #include "random.h"
 #include "enemies.h"
+#include "bullets.h"
 
 #define IS_KEY_PRESSED(k) (!(REG_KEYINPUT & (k)))
+
+int sm_ticksUntilShoot = 0;
+const int DELAY_SHOOT_TICKS = 10;
+void TryToShoot(Sprite* player)
+{
+	if (sm_ticksUntilShoot <= 0)
+	{
+		InitBullet(player->x, player->y);
+		sm_ticksUntilShoot = DELAY_SHOOT_TICKS;
+	}
+}
 
 void GetInput(Sprite* sp)
 {
@@ -21,8 +33,10 @@ void GetInput(Sprite* sp)
     if (IS_KEY_PRESSED(KEY_RIGHT))
         sp->x++;
  
-    if (IS_KEY_PRESSED(KEY_A))
-        sp->oam->attribute[1] ^= OBJ_HFLIP;
+	if (IS_KEY_PRESSED(KEY_A))
+	{
+		TryToShoot(sp);
+	}
 
     if (IS_KEY_PRESSED(KEY_B))
         sp->oam->attribute[1] ^= OBJ_VFLIP;
@@ -55,12 +69,16 @@ int main_game(void)
         GetInput(&player);
         UpdateSprite(&player);
         
+		UpdateBullets();
         UpdateEnemies();
 
 		VBlankIntrWait();
         
         UpdateOAM();
         UpdateScroll();
+
+		if (sm_ticksUntilShoot > 0)
+			--sm_ticksUntilShoot;
     }
 }
 
