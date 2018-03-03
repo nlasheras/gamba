@@ -4,9 +4,12 @@
 #include "sprites.h" 
 #include "random.h" 
 
+#define MAX_BULLETS 16
+Bullet sm_bullets[MAX_BULLETS];
 
 int findEmptyBullet()
 {
+	for (int i = 0; i < MAX_BULLETS; ++i)
 		if (!sm_bullets[i].enabled)
 			return i;
 	return -1;
@@ -36,6 +39,7 @@ void freeBullet(Bullet* enemy)
 
 void UpdateBullets()
 {
+	for (int i = 0; i<MAX_BULLETS; ++i)
 	{
 		Bullet* bullet = &(sm_bullets[i]);
 		if (!bullet->enabled)
