@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\audio.c" />
     <ClCompile Include="..\source\background.c" />
     <ClCompile Include="..\source\bullets.c" />
     <ClCompile Include="..\source\collision.c" />
@@ -31,6 +32,7 @@
     <ClCompile Include="..\source\sprites.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\audio.h" />
     <ClInclude Include="..\source\background.h" />
     <ClInclude Include="..\source\bullets.h" />
     <ClInclude Include="..\source\collision.h" />

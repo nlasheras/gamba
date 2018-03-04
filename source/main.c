@@ -7,6 +7,7 @@
 #include "bullets.h"
 #include "explosions.h"
 #include "entities.h"
+#include "audio.h"
 
 #define IS_KEY_PRESSED(k) (!(REG_KEYINPUT & (k)))
 
@@ -46,6 +47,7 @@ void game_process_input()
 	{
 		if (sm_player.ticksUntilShoot <= 0)
 		{
+			audio_play_laser();
 			bullet_create(sm_player.entity->x, sm_player.entity->y);
 			sm_player.ticksUntilShoot = DELAY_SHOOT_TICKS;
 		}
@@ -132,12 +134,16 @@ int main_game(void)
     sprites_load_sprite_sheet();
     background_init();
 
+	audio_init();
+
 	game_init();
    
     enemies_init_all();
 
 	while (1) 
     {
+		audio_update();
+
 		game_process_input();
         
 		bullets_update_all();

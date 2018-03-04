@@ -1,5 +1,6 @@
 #include "explosions.h"
 #include "background.h"
+#include "audio.h"
 
 #define MAX_EXPLOSIONS 16
 Explosion sm_explosions[MAX_EXPLOSIONS];
@@ -34,6 +35,8 @@ Explosion* explosion_create(int x, int y)
 	entity->y = y;
 	fx->animationTime = 0;
 	fx->frame = 0;
+
+	audio_play_explosion();
 
 	return fx;
 }

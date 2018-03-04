@@ -45,6 +45,9 @@
     <ClCompile Include="..\source\entities.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\audio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\background.h">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\enemies_internal.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\audio.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
