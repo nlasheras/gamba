@@ -95,9 +95,21 @@ void background_init()
 
 int sm_current = 0;
 int sm_scrollX = 0;
+int sm_scrollSpeedX = 0;
+
+int background_get_scroll_speed()
+{
+	return sm_scrollSpeedX;
+}
+
+void background_set_scroll_speed(int speed)
+{
+	sm_scrollSpeedX = speed;
+}
+
 void background_update()
 {
-    ++sm_scrollX;
+    sm_scrollX += sm_scrollSpeedX;
 	BG_OFFSET[1].x = sm_scrollX / 3;
 	BG_OFFSET[0].x = sm_scrollX;
     

@@ -1,4 +1,5 @@
 #include "explosions.h"
+#include "background.h"
 
 #define MAX_EXPLOSIONS 16
 Explosion sm_explosions[MAX_EXPLOSIONS];
@@ -50,7 +51,7 @@ void explosions_update_all()
 		Explosion* fx = &(sm_explosions[i]);
 		if (fx->entity)
 		{
-			fx->entity->x -= 1;
+			fx->entity->x -= background_get_scroll_speed();
 
 			fx->animationTime++;
 

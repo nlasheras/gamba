@@ -6,41 +6,115 @@
 #include "enemies.h"
 #include "bullets.h"
 #include "explosions.h"
+#include "entities.h"
 
 #define IS_KEY_PRESSED(k) (!(REG_KEYINPUT & (k)))
 
-int sm_ticksUntilShoot = 0;
+typedef struct {
+	Entity* entity;
+	int ticksUntilShoot;
+	int hp;
+	bool dead;
+	int ticksUntilSpawn;
+	int ticksInvulnerability;
+} Player;
+
+Player sm_player;
+
 const int DELAY_SHOOT_TICKS = 10;
-void TryToShoot(Sprite* player)
+
+void game_process_input()
 {
-	if (sm_ticksUntilShoot <= 0)
+	if (sm_player.dead)
+		return;
+
+	// handle ship movement
+	int deltaX = 0, deltaY = 0;
+    if (IS_KEY_PRESSED(KEY_UP))
+        deltaY--;
+    if (IS_KEY_PRESSED(KEY_DOWN))
+        deltaY++;
+    if (IS_KEY_PRESSED(KEY_LEFT))
+        deltaX--;
+    if (IS_KEY_PRESSED(KEY_RIGHT))
+        deltaX++;
+ 
+	sm_player.entity->x += deltaX;
+	sm_player.entity->y += deltaY;
+
+	if (IS_KEY_PRESSED(KEY_A))
 	{
-		bullet_create(player->x, player->y);
-		sm_ticksUntilShoot = DELAY_SHOOT_TICKS;
+		if (sm_player.ticksUntilShoot <= 0)
+		{
+			bullet_create(sm_player.entity->x, sm_player.entity->y);
+			sm_player.ticksUntilShoot = DELAY_SHOOT_TICKS;
+		}
 	}
 }
 
-void GetInput(Sprite* sp)
+void game_spawn_player()
 {
-    if (IS_KEY_PRESSED(KEY_UP))
-        sp->y--;
+	sm_player.entity->x = 10;
+	sm_player.entity->y = 100;
+	sm_player.hp = 1;
+	sm_player.dead = false;
+	sm_player.ticksInvulnerability = 15;
+}
 
-    if (IS_KEY_PRESSED(KEY_DOWN))
-        sp->y++;
+void game_init()
+{
+	sm_player.entity = entity_create(ENTITY_PLAYER, &sm_player);
+	entity_set_sprite(sm_player.entity, 0);
+	collision_init(&(sm_player.entity->collider), 0, 0, 16, 16);
+	game_spawn_player();
+	background_set_scroll_speed(1);
+}
 
-    if (IS_KEY_PRESSED(KEY_LEFT))
-        sp->x--;
- 
-    if (IS_KEY_PRESSED(KEY_RIGHT))
-        sp->x++;
- 
-	if (IS_KEY_PRESSED(KEY_A))
+void game_kill_player()
+{
+	explosion_create(sm_player.entity->x, sm_player.entity->y);
+	sm_player.dead = true;
+	sm_player.ticksUntilSpawn = 30;
+	sm_player.entity->x = -16;
+}
+
+void game_update()
+{
+	if (sm_player.ticksUntilShoot > 0)
+		--sm_player.ticksUntilShoot;
+
+	if (sm_player.ticksInvulnerability <= 0)
 	{
-		TryToShoot(sp);
+		const int numEnemies = entities_get_count(ENTITY_ENEMY);
+		for (int i = 0; i < numEnemies; ++i)
+		{
+			Entity* entity_enemy = entities_get(ENTITY_ENEMY, i);
+			if (entity_enemy && collision_test(entity_enemy, sm_player.entity))
+			{
+				sm_player.hp -= 1;
+			}
+		}
+	}
+	else
+	{
+		sm_player.ticksInvulnerability--;
 	}
 
-    if (IS_KEY_PRESSED(KEY_B))
-        sp->oam->attribute[1] ^= OBJ_VFLIP;
+	if (!sm_player.dead && sm_player.hp <= 0)
+	{
+		background_set_scroll_speed(0);
+		game_kill_player();
+	}
+
+	if (sm_player.dead)
+	{
+		sm_player.ticksUntilSpawn--;
+		if (sm_player.ticksUntilSpawn <= 0)
+		{
+			background_set_scroll_speed(1);
+			game_spawn_player();
+		}
+	}
 }
 
 int main_game(void)
@@ -58,30 +132,25 @@ int main_game(void)
     sprites_load_sprite_sheet();
     background_init();
 
-    Sprite player;
-
-    sprite_init(&player, 0);
-    player.x = 10; player.y = 10;
+	game_init();
    
     enemies_init_all();
 
 	while (1) 
     {
-        GetInput(&player);
-        sprite_update(&player);
+		game_process_input();
         
 		bullets_update_all();
         enemies_update_all();
 		explosions_update_all();
 		entities_update_all();
 
+		game_update();
+
 		VBlankIntrWait();
         
         sprites_update_OAM();
         background_update();
-
-		if (sm_ticksUntilShoot > 0)
-			--sm_ticksUntilShoot;
     }
 }
 

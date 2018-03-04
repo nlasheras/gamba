@@ -9,7 +9,8 @@ typedef enum
 {
 	ENTITY_ENEMY,
 	ENTITY_BULLET,
-	ENTITY_EXPLOSION
+	ENTITY_EXPLOSION,
+	ENTITY_PLAYER
 } EntityType;
 
 typedef struct _entity {
