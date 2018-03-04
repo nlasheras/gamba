@@ -18,6 +18,11 @@ void audio_update()
 	mmFrame();
 }
 
+void audio_play_music()
+{
+	//mmStart(MOD_MUSIC, MM_PLAY_LOOP);
+}
+
 void audio_play_explosion()
 {
 	mm_sound_effect fx = {

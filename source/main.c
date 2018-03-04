@@ -139,6 +139,8 @@ int main_game(void)
 	game_init();
    
     enemies_init_all();
+		
+	audio_play_music();
 
 	while (1) 
     {
