@@ -5,7 +5,7 @@
 #include "entities.h"
 
 typedef struct _bullet {
-	Entity* entity;
+    Entity* entity;
 } Bullet;
 
 Bullet* bullet_create(int x, int y);

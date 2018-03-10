@@ -9,9 +9,9 @@
 
 typedef struct
 {
-   int x,y;
-   SpriteEntry* oam;
-   int gfxID;
+    int x, y;
+    SpriteEntry* oam;
+    int gfxID;
 } Sprite;
 
 void sprites_init_OAM();

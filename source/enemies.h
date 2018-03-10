@@ -7,10 +7,10 @@
 typedef struct _enemy {
     Entity* entity;
     int hp;
-	int frame;
-	int animationTime;
+    int frame;
+    int animationTime;
 } Enemy;
- 
+
 void enemies_init_all();
 void enemies_update_all();
 

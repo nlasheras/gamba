@@ -10,31 +10,31 @@ int sm_r256index;
 
 void random_init(int seed)
 {
-   int i,j,msb;
-   j=seed;
-   for(i=0;i<256;i++)
-   {
-      sm_r256table[i] = (u16)(j=j*65539);
-   }
- 
-   msb=0x8000;
+    int i, j, msb;
+    j = seed;
+    for (i = 0; i < 256; i++)
+    {
+        sm_r256table[i] = (u16)(j = j * 65539);
+    }
 
-   j=0;
-   for(i=0;i<16;i++)
-   {
-      j = i*5 + 3;
-      sm_r256table[j] |= msb;
-      sm_r256table[j+1] &= ~msb;
-      msb >>= 1;
-   }
+    msb = 0x8000;
+
+    j = 0;
+    for (i = 0; i < 16; i++)
+    {
+        j = i * 5 + 3;
+        sm_r256table[j] |= msb;
+        sm_r256table[j + 1] &= ~msb;
+        msb >>= 1;
+    }
 }
- 
+
 u16 r256(void)
 {
-   u16 r;
-   r = sm_r256table[(sm_r256index + 103) & 255] ^ sm_r256table[sm_r256index & 255];
-   sm_r256table[sm_r256index++ & 255] = r;
-   return r;
+    u16 r;
+    r = sm_r256table[(sm_r256index + 103) & 255] ^ sm_r256table[sm_r256index & 255];
+    sm_r256table[sm_r256index++ & 255] = r;
+    return r;
 }
 
 int rand(int min, int max)

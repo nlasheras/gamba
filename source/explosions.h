@@ -5,9 +5,9 @@
 #include "entities.h"
 
 typedef struct {
-	Entity* entity;
-	int frame;
-	int animationTime;
+    Entity* entity;
+    int frame;
+    int animationTime;
 } Explosion;
 
 Explosion* explosion_create(int x, int y);

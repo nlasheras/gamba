@@ -8,9 +8,9 @@ typedef struct _entity Entity; // forward-declaration
 
 typedef struct
 {
-	bool enabled;
-	int x, y;
-	int w, h;
+    bool enabled;
+    int x, y;
+    int w, h;
 } Collider;
 
 
