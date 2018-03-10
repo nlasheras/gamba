@@ -26,6 +26,7 @@
     <ClCompile Include="..\source\enemies.c" />
     <ClCompile Include="..\source\entities.c" />
     <ClCompile Include="..\source\explosions.c" />
+    <ClCompile Include="..\source\game.c" />
     <ClCompile Include="..\source\image.c" />
     <ClCompile Include="..\source\main.c" />
     <ClCompile Include="..\source\random.c" />
