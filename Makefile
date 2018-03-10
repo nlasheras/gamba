@@ -73,7 +73,7 @@ export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin graphics.bin
 BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
 
 export AUDIOFILES	:=	$(foreach dir,$(notdir $(wildcard $(AUDIO)/*.*)),$(CURDIR)/$(AUDIO)/$(dir))
@@ -145,6 +145,13 @@ $(OUTPUT).elf	:	$(OFILES)
 soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------
 	@mmutil $^ -osoundbank.bin -hsoundbank.h
+
+#---------------------------------------------------------------------------------
+# rule to build graphics assets with my tool
+#---------------------------------------------------------------------------------
+graphics.bin : ../tools/atlas_generator.py
+#---------------------------------------------------------------------------------
+	@python ../tools/atlas_generator.py
 
 #---------------------------------------------------------------------------------
 # This rule links in binary data with the .bin extension

@@ -45,6 +45,9 @@ vs2015/Debug
 vs2015/Release
 *.args.json
 
+# PyCharm 
+tools/.idea
+
 # My WIP files
 theme_v2/
 tasks.txt
