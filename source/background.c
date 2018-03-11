@@ -1,11 +1,10 @@
 #include "background.h" 
-#include "image.h"
 #include "random.h"
 
 #include <gba_video.h>
 #include <gba_dma.h>
 
-#include "background_sheet_pcx.h"
+#include "background_bin.h"
 
 // layer 0: parallax 256 color 256x256
 // layer 1: background 256 color 256x256
@@ -14,61 +13,15 @@
 u16* sm_parallaxMap = 0;
 u16* sm_backgroundMap = 0;
 
-#define USE_DMA
-
-void test_generate_sprites_and_palette()
-{
-#ifdef USE_DMA
-    dmaCopy(SPRITE_PALETTE, BG_COLORS, 256 * sizeof(u16));
-#else
-    u16* pal = BG_COLORS;
-    for (int i = 0; i < 256; i++)
-        *pal++ = SPRITE_PALETTE[i];
-#endif
-
-    const int tileSize = 4 * 8;
-    for (int s = 0; s < 256; ++s)
-    {
-        u16* dst = ((u16*)VRAM) + s * tileSize;
-        for (int x = 0; x < 4 * 8; ++x)
-            *(dst + x) = s << 8 | s;
-    }
-}
-
-void internal_copy_background_tiles_to_VRAM(Image* image)
-{
-    const int tileSize = 4 * 8;
-    int count = 0;
-    for (int iy = 0; iy < image->height / 8; ++iy)
-    {
-        for (int ix = 0; ix < image->width / 8; ++ix)
-        {
-            u16* dst = ((u16*)VRAM) + count * tileSize;
-            u8* src = image->data + iy * image->width * 8 + ix * 8;
-
-            for (int y = 0; y < 8; ++y)
-                for (int x = 0; x < 4; ++x)
-                {
-                    const u8* curr = src + y * image->width + 2 * x;
-                    *(dst + 4 * y + x) = (*curr) | (*(curr + 1) << 8);
-                }
-
-            ++count;
-        }
-    }
-}
-
 void internal_load_sprite_sheet()
 {
-    Image sheet;
-    image_load_pcx(&sheet, background_sheet_pcx);
+    u16* pal = (u16*)background_bin;
+    int pal_size = 256 * sizeof(u16);
 
-    internal_copy_background_tiles_to_VRAM(&sheet);
+    u8* sprites = (u8*)(background_bin + pal_size);
 
-    for (int i = 0; i < 256; i++)
-        BG_COLORS[i] = sheet.palette[i];
-
-    image_free(&sheet);
+    dmaCopy(pal, BG_COLORS, pal_size);
+    dmaCopy(sprites, (u32*)VRAM, 13 * 8 * 8);
 }
 
 void background_init()

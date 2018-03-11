@@ -1,5 +1,4 @@
 #include <gba.h> 
-#include "background.h"
 
 int game_main();
 
@@ -23,7 +22,7 @@ int main_test_mode3()
 
 #include <stdio.h>
 
-#include "graphics_bin.h"
+#include "sprites_bin.h"
 
 int main_test_console()
 {
@@ -59,10 +58,10 @@ int main_test_sprites()
     REG_DISPCNT = MODE_0 | OBJ_1D_MAP;
     REG_DISPCNT |= OBJ_ENABLE;
 
-    u16* pal = (u16*)graphics_bin;
+    u16* pal = (u16*)sprites_bin;
     int pal_size = 256 * sizeof(u16);
 
-    u8* sprites = (u8*)(graphics_bin + pal_size);
+    u8* sprites = (u8*)(sprites_bin + pal_size);
 
     dmaCopy(pal, SPRITE_PALETTE, pal_size);
     dmaCopy(sprites, SPRITE_GFX, 12 * 16 * 16 + 3 * 32 * 32);
@@ -123,7 +122,7 @@ int main_test_sprites()
 
 int main()
 {
-    //game_main();
+    game_main();
     //main_test_console();
-    main_test_sprites();
+    //main_test_sprites();
 }

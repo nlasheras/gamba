@@ -19,9 +19,9 @@ include $(DEVKITARM)/gba_rules
 TARGET		:=	$(shell basename $(CURDIR))_mb
 BUILD		:=	build
 SOURCES		:=	source
-DATA		:=  data
-GRAPHICS	:=	gfx	
-AUDIO		:=  audio
+DATA		:=	data
+GRAPHICS	:=	gfx
+AUDIO		:=	audio
 INCLUDES	:=
 
 #---------------------------------------------------------------------------------
@@ -73,10 +73,12 @@ export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin graphics.bin
-BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin sprites.bin background.bin
 
 export AUDIOFILES	:=	$(foreach dir,$(notdir $(wildcard $(AUDIO)/*.*)),$(CURDIR)/$(AUDIO)/$(dir))
+
+export CHARFILES	:=	$(foreach dir,$(notdir $(wildcard $(DATA)/sprites/*.*)),$(CURDIR)/$(DATA)/sprites/$(dir))
+export BGFILES		:=	$(foreach dir,$(notdir $(wildcard $(DATA)/background/*.*)),$(CURDIR)/$(DATA)/background/$(dir))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -116,6 +118,8 @@ $(BUILD):
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 all	: $(BUILD)
+
+print-%	: ; @echo $* = $($*)
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
@@ -142,16 +146,17 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 # rule to build soundbank from music files
 #---------------------------------------------------------------------------------
-soundbank.bin : $(AUDIOFILES)
+soundbank.bin	:	$(AUDIOFILES)
 #---------------------------------------------------------------------------------
 	@mmutil $^ -osoundbank.bin -hsoundbank.h
 
 #---------------------------------------------------------------------------------
 # rule to build graphics assets with my tool
 #---------------------------------------------------------------------------------
-graphics.bin : ../tools/atlas_generator.py
-#---------------------------------------------------------------------------------
-	@python ../tools/atlas_generator.py
+sprites.bin	:	../tools/atlas_generator.py $(CHARFILES)
+	@python ../tools/atlas_generator.py sprites.bin
+background.bin	:	../tools/atlas_generator.py $(BGFILES)
+	@python ../tools/atlas_generator.py background.bin
 
 #---------------------------------------------------------------------------------
 # This rule links in binary data with the .bin extension

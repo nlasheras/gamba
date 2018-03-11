@@ -1,10 +1,13 @@
 from struct import pack
 from PIL import Image
+import sys
 
-sources = [
-    ["../data/test_sheet.pcx", 16, 12],
-    ["../data/character.pcx", 32, 3]
-]
+sources_for_file = {"sprites.bin": [
+    ["../data/sprites/assets_v1.pcx", 16, 12],
+    ["../data/sprites/character.pcx", 32, 3]
+], "background.bin": [
+    ["../data/background/space_v1.pcx", 8, 13]
+]}
 
 images = []
 tile_sizes = []
@@ -34,13 +37,15 @@ def read_source(filename):
     indexes = merge_palette(image.getpalette())
     color_indexes.append(indexes)
 
+param = sys.argv[1]
 
+sources = sources_for_file[param]
 for tuple in sources:
     read_source(tuple[0])
     tile_sizes.append(tuple[1])
     num_sprites.append(tuple[2])
 
-print("Merged palette to " + str(len(palette)) + " colors")
+#print("Merged palette to " + str(len(palette)) + " colors")
 
 # TODO assert evertyhing!
 def write_tiles(file, image, indices, tile_size, num_tiles):
@@ -65,7 +70,7 @@ def write_tiles(file, image, indices, tile_size, num_tiles):
                 return
 
 # TODO this should be a parameter!
-file = open("graphics.bin", "wb")
+file = open(param, "wb")
 
 # TODO write only the number of used colors
 # TODO make sure color 0 is always 0,0,0 (or not use that)

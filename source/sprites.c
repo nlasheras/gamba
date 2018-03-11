@@ -1,10 +1,9 @@
 #include "sprites.h"
-#include "image.h"
 
 #include <gba_video.h>
 #include <gba_dma.h>
 
-#include "test_sheet_pcx.h"
+#include "sprites_bin.h"
 
 SpriteEntry sm_OAMCopy[128];
 
@@ -70,40 +69,15 @@ void sprite_update(Sprite* sprite)
     sprite->oam->attribute[0] |= (sprite->y & 0x00FF);
 }
 
-void sprites_internal_copy_tiles(const u8* src, u16* dst, int width, int height)
-{
-    const int stride = width;
-    for (int tj = 0; tj < height / 16; ++tj)
-    {
-        const u8* srcLine = src + tj * width * 16;
-        u16* dstLine = dst + tj * width * 8;
-        for (int ti = 0; ti < width / 16; ++ti)
-        {
-            for (int n = 0; n < 4; ++n)
-            {
-                const u8* src2 = srcLine + ti * 16 + (n / 2) * 8 * stride + (n % 2) * 8;
-                u16* dst2 = dstLine + ti * 4 * 8 * 4 + n * 8 * 4;
-                for (int y = 0; y < 8; ++y)
-                {
-                    for (int x = 0; x < 4; ++x) {
-                        dst2[x + y * 4] = src2[2 * x + y * stride] | (src2[2 * x + 1 + y * stride] << 8);
-                    }
-                }
-            }
-        }
-    }
-}
 
 void sprites_load_sprite_sheet()
 {
-    Image sheet;
-    image_load_pcx(&sheet, test_sheet_pcx);
+    u16* pal = (u16*)sprites_bin;
+    int pal_size = 256 * sizeof(u16);
 
-    sprites_internal_copy_tiles(sheet.data, SPRITE_GFX, sheet.width, sheet.height);
+    u8* sprites = (u8*)(sprites_bin + pal_size);
 
-    for (int i = 0; i < 256; i++)
-        SPRITE_PALETTE[i] = sheet.palette[i];
-
-    image_free(&sheet);
+    dmaCopy(pal, SPRITE_PALETTE, pal_size);
+    dmaCopy(sprites, SPRITE_GFX, 12 * 16 * 16);
 }
 

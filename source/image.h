@@ -4,6 +4,9 @@
 
 #include "gba_types.h"
 
+// DEPRECATED: with the atlas_generator.py I can load the sprites 
+// directly from the cartridge
+
 typedef struct {
     u8*  data;
     u16* palette;
