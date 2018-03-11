@@ -71,7 +71,7 @@ int main_test_sprites()
     {
         sm_OAMCopy[i].attribute[0] = OBJ_DISABLE;
     }
-    dmaCopy(sm_OAMCopy, OAM, 128*sizeof(SpriteEntry));
+    mem_copy32(sm_OAMCopy, OAM, 128*sizeof(SpriteEntry));
 
     SpriteEntry* sprite = &sm_OAMCopy[0];
     sprite->attribute[0] = OBJ_256_COLOR | OBJ_SHAPE(0);
@@ -80,44 +80,47 @@ int main_test_sprites()
 
     int tick = 0;
     int gfxID = 0;
-    int x = 10, y  = 10;
+    int x = 32, y  = 32;
+    int deltaX = 1;
     while (true)
     {
         ++tick;
 
         if (tick % 5 == 0)
         {
-            ++x;
-            if (x > SCREEN_WIDTH) x = 0;
+            x += deltaX;
+            if (x > SCREEN_WIDTH - 32)
+                deltaX = -1;
+            else if (x < 32)
+                deltaX = 1;
         }
+
+        bool gfxDirty = false;
+        if (tick % 10 == 0)
+        {
+            gfxID = (gfxID + 1) % 12;
+            gfxDirty = true;
+        }
+
+        sprite->attribute[0] &= 0xFF00;
         sprite->attribute[0] |= OBJ_Y(y);
         sprite->attribute[1] &= 0xFE00;
         sprite->attribute[1] |= OBJ_X(x);
- 
-        sm_OAMCopy[1].attribute[1] = x;
-        sm_OAMCopy[1].attribute[2] = tick;
 
         VBlankIntrWait();
+ 
+        mem_copy32(sm_OAMCopy, OAM, 1*sizeof(SpriteEntry));
 
-        u16* ptr = (u16*)VRAM;
-        ptr[0] = tick;
-        ptr[1] = gfxID;
-        ptr[2] = x;
-        ptr[3] = y;
-
-        if (tick % 10 == 0)
-            gfxID = (gfxID + 1) % 12;
-    
-        dmaCopy(sm_OAMCopy, OAM, 1*sizeof(SpriteEntry));
-
-        //mem_copy32(sprite, OAM, 128*sizeof(SpriteEntry));
-        dmaCopy(sprites + gfxID * 16 * 16, SPRITE_GFX, 1 * 16 * 16);
+        if (gfxDirty)
+        {
+            dmaCopy(sprites + gfxID * 16 * 16, SPRITE_GFX, 1 * 16 * 16);
+        }
     }
 }
 
 int main()
 {
-    //game_main();
+    game_main();
     //main_test_console();
-    main_test_sprites();
+    //main_test_sprites();
 }
