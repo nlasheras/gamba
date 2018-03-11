@@ -65,7 +65,7 @@ int main_test_sprites()
     u8* sprites = (u8*)(graphics_bin + pal_size);
 
     dmaCopy(pal, SPRITE_PALETTE, pal_size);
-    dmaCopy(sprites, SPRITE_GFX, 12 * 16 * 16);
+    dmaCopy(sprites, SPRITE_GFX, 12 * 16 * 16 + 3 * 32 * 32);
 
     for (int i = 0; i < 128; ++i)
     {
@@ -75,8 +75,8 @@ int main_test_sprites()
 
     SpriteEntry* sprite = &sm_OAMCopy[0];
     sprite->attribute[0] = OBJ_256_COLOR | OBJ_SHAPE(0);
-    sprite->attribute[1] = OBJ_SIZE(1); 
-    sprite->attribute[2] = OBJ_CHAR(0 * 8);
+    sprite->attribute[1] = OBJ_SIZE(2); 
+    sprite->attribute[2] = OBJ_CHAR(12 * 8);
 
     int tick = 0;
     int gfxID = 0;
@@ -98,7 +98,7 @@ int main_test_sprites()
         bool gfxDirty = false;
         if (tick % 10 == 0)
         {
-            gfxID = (gfxID + 1) % 12;
+            gfxID = (gfxID + 1) % 3;
             gfxDirty = true;
         }
 
@@ -108,19 +108,22 @@ int main_test_sprites()
         sprite->attribute[1] |= OBJ_X(x);
 
         VBlankIntrWait();
+
+        sm_OAMCopy[1].attribute[1] = tick;
+        sm_OAMCopy[1].attribute[2] = gfxID;
  
-        mem_copy32(sm_OAMCopy, OAM, 1*sizeof(SpriteEntry));
+        mem_copy32(sm_OAMCopy, OAM, 2*sizeof(SpriteEntry));
 
         if (gfxDirty)
         {
-            dmaCopy(sprites + gfxID * 16 * 16, SPRITE_GFX, 1 * 16 * 16);
+            dmaCopy(sprites + 12 * 16 * 16 + gfxID * 32 * 32, SPRITE_GFX + 6 * 16 * 16 , 1 * 32 * 32);
         }
     }
 }
 
 int main()
 {
-    game_main();
+    //game_main();
     //main_test_console();
-    //main_test_sprites();
+    main_test_sprites();
 }
