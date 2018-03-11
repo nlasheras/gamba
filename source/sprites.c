@@ -22,7 +22,7 @@ void sprites_update_OAM()
 #ifdef USE_DMA
     dmaCopy(sm_OAMCopy, OAM, oamSize);
 #else
-    for (int i = 0; i < size / 4; i++)
+    for (int i = 0; i < oamSize / 4; i++)
         ((u32*)OAM)[i] = ((u32*)sm_OAMCopy)[i];
 #endif
 }
