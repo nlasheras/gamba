@@ -64,7 +64,7 @@ int main_test_sprites()
     u8* sprites = (u8*)(sprites_bin + pal_size);
 
     dmaCopy(pal, SPRITE_PALETTE, pal_size);
-    dmaCopy(sprites, SPRITE_GFX, 12 * 16 * 16 + 3 * 32 * 32);
+    dmaCopy(sprites, SPRITE_GFX, 12 * 16 * 16 + 1 * 32 * 32);
 
     for (int i = 0; i < 128; ++i)
     {
