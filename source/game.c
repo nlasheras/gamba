@@ -67,7 +67,7 @@ void game_init()
 {
     sm_player.entity = entity_create(ENTITY_PLAYER, &sm_player);
     entity_set_sprite(sm_player.entity, 0);
-    collision_init(&(sm_player.entity->collider), 0, 0, 16, 16);
+    collision_init(&(sm_player.entity->collider), 2, 2, 12, 12);
     game_spawn_player();
     background_set_scroll_speed(1);
 }
